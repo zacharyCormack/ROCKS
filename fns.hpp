@@ -1,8 +1,7 @@
 #pragma once
 #include "Board.hpp"
 
-const char* rules;
 bool ask(char*);
-void usermove();
-void compmove();
-void playgame(void(), void());
+void usermove(Board);
+void compmove(Board);
+void playgame(void(*)(Board), void(*)(Board));

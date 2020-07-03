@@ -9,6 +9,7 @@ class Board
 	vector < vector < Rock > > rocks;
 public:
 	void print();
+	bool isover();
 	int move(unsigned, unsigned);
 	Board(unsigned);
 };
