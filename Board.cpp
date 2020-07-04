@@ -12,6 +12,11 @@ Board::Board(unsigned n)
 	}
 };
 
+unsigned Board::get_size()
+{
+	return rocks.size();
+}
+
 int Board::move(unsigned col_or_row_num, unsigned num_rocks)
 {
 	if (col_or_row_num >= rocks.size()*4)
@@ -60,16 +65,18 @@ bool Board::isover()
 	return true;
 }
 
-void Board::print()
+void Board::print(unsigned selected)
 {
-	cout << "The board is:\n\n";
+	cout << "\nThe board is:\n";
 	for (size_t i = 0; i < rocks.size(); i++)
 	{
-		cout << "\n ";
+		cout << "\n  ";
 		for (size_t j = 0; j < rocks.size(); j++)
 			if (rocks[i][j].down)
 				cout << " *";
 			else
 				cout << "  ";
+		if (i == selected)
+			cout << " <";
 	}
 }

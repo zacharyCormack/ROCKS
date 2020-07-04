@@ -8,14 +8,16 @@ const char* rules =
 
 int main()
 {
-	// char test[1];
-	// cin.get(test, 1);
-	cout << rules;
+	cout << "\e[1;1H\e[2J" << rules;
 	bool two_players = ask("Play against the computer");
 	if (two_players)
 		playgame(&usermove, &usermove);
-	bool user_first = ask("Do you want to go first");
-	if (user_first)
-		playgame(&usermove, &compmove);
-	playgame(&compmove, &usermove);
+	else
+	{
+		bool user_first = ask("Do you want to go first");
+		if (user_first)
+			playgame(&usermove, &compmove);
+		else
+			playgame(&compmove, &usermove);
+	}
 }

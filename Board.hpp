@@ -8,7 +8,8 @@ class Board
 {
 	vector < vector < Rock > > rocks;
 public:
-	void print();
+	void print(unsigned);
+	unsigned get_size();
 	bool isover();
 	int move(unsigned, unsigned);
 	Board(unsigned);
