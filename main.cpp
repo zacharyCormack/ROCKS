@@ -1,5 +1,6 @@
 #include "fns.hpp"
 #include <iostream>
+
 using namespace std;
 
 const char* rules =
@@ -9,7 +10,7 @@ const char* rules =
 int main()
 {
 	cout << "\e[1;1H\e[2J" << rules;
-	bool two_players = ask("Play against the computer");
+	bool two_players = !(ask("Play against the computer"));
 	if (two_players)
 		playgame(&usermove, &usermove);
 	else
