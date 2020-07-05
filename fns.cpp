@@ -3,7 +3,7 @@
 
 bool ask(char* q)
 {
-	std::cout << q << "? y/n:";
+	std::cout << q << "? y/n: ";
 	string ans;
 	std::cin >> ans;
 	if (ans == "y")
@@ -13,16 +13,11 @@ bool ask(char* q)
 	return ask(q);
 }
 
-bool usermove_validate(Board board)
-{
-	
-}
-
 void usermove_select(Board &board, unsigned x, unsigned y)
 {
-	cout << "\033[H" << "\n\nSelecing outer rock:\n";
+	cout << "\033[H" << "\n\n\n";
 	board.print();
-	cout << "\n\nUse wasd to move cursor, q to toggle whether rock is set to be removed, and e to do move when VALID appears.\n";
+	cout << '\n' << (board.validate() ? "VALID" : "     ") << "\n\nUse wasd to move cursor, q to toggle whether rock is set to be removed, and e to do move when VALID appears.\n";
 	cout << "\e[" << 7 + y << ";" << 3 + 2*x << "H";
 	char key;
 	key = getchar();
@@ -59,22 +54,18 @@ void usermove_select(Board &board, unsigned x, unsigned y)
 		board.toggle_r(x, y);
 		break;
 	case 'e':
-		if (usermove_validate(board))
+		if (board.validate())
 			return;
+		cout << '\a';
 		break;
 	default:
 		break;
 	}
-	if (usermove_validate(board))
-		cout << "VALID";
-	else
-		cout << "     ";
 	usermove_select(board, x, y);
 }
 
 void usermove(Board* board)
 {
-	cout << "\e[1;1H\e[2J";
 	cout << "Human move\n\n\n";
 	board->print();
 	cout << "\e[H";
@@ -99,7 +90,7 @@ void playgame(void(*p1)(Board*), void(*p2)(Board*))
 	bool p2win = true;
 	do
 	{
-		cout << "Player 1: ";
+		cout << "\e[1;1H\e[2J" << "Player 1: ";
 		(*p1)(&board);
 		if (board.isover())
 		{
@@ -107,7 +98,7 @@ void playgame(void(*p1)(Board*), void(*p2)(Board*))
 			p2win = false;
 			break;
 		}
-		cout << "Player 2: ";
+		cout << "\e[1;1H\e[2J" << "Player 2: ";
 		(*p2)(&board);
 	}
 	while (!board.isover());

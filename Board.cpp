@@ -81,11 +81,30 @@ void Board::toggle_r(unsigned x, unsigned y)
 	}
 }
 
+bool Board::validate()
+{
+	unsigned first_x = -1;
+	unsigned first_y = -1;
+	bool no_second = true;
+	bool second_down;
+	for (unsigned i = 0; i < rocks.size(); i++)
+		for (unsigned j = 0; j < rocks.size(); j++)
+			if (rocks[i][j]==(char)2)
+				if (first_x >= rocks.size())
+				{
+					first_x = j;
+					first_y = i;
+				}
+	if (first_x >= rocks.size())
+		return false;
+	return true;
+}
+
 void Board::clear_r()
 {
 	for (size_t i = 0; i < rocks.size(); i++)
-		for (size_t j = 0; i < rocks.size(); j++)
-			rocks[i][j] = (rocks[i][j] == (char)1) ? (char)1 : (char)0;
+		for (size_t j = 0; j < rocks.size(); j++)
+			rocks[i][j] = ((rocks[i][j] == (char)0) ? (char)0 : (char)1);
 }
 
 void Board::print()

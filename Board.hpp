@@ -13,5 +13,6 @@ public:
 	int move(unsigned, unsigned);
 	void toggle_r(unsigned, unsigned);
 	void clear_r();
+	bool validate();
 	Board(unsigned);
 };
