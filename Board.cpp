@@ -109,16 +109,16 @@ void Board::clear_r()
 
 void Board::print()
 {
-	printf("\nThe board is:\n");
+	cout << "\nThe board is:\n";
 	for (size_t i = 0; i < rocks.size(); i++)
 	{
-		printf("\n ");
+		cout << "\n ";
 		for (size_t j = 0; j < rocks.size(); j++)
 			if (rocks[i][j]==(char)0)
-				printf(" o");
+				cout << " o";
 			else if (rocks[i][j]==(char)1)
-				printf("  ");
+				cout << "  ";
 			else
-				printf(" *");
+				cout << " *";
 	}
 }

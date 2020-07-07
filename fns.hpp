@@ -1,6 +1,6 @@
 #pragma once
 #include "Board.hpp"
-#include <curses.h>
+#include <cstdio>
 
 bool ask(char*);
 void usermove(Board*);
