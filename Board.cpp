@@ -81,6 +81,69 @@ void Board::toggle_r(unsigned x, unsigned y)
 	}
 }
 
+bool rules_violation_one()
+{
+	cout <<
+		"\e[5;31m"
+		" * at least one rock is on the perimeter of the grid is removed\n"
+		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		" * all the rocks removed are in a straight line\n"
+		" * no two rocks removed have a space between them\n"
+		"\e[0m";
+	return false;
+}
+
+bool rules_violation_two()
+{
+	cout <<
+		"\e[5;32m"
+		" * at least one rock is on the perimeter of the grid is removed\n"
+		"\e[5;31m"
+		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		" * all the rocks removed are in a straight line\n"
+		" * no two rocks removed have a space between them\n"
+		"\e[0m";
+	return false;
+}
+
+bool rules_violation_three()
+{
+	cout <<
+		"\e[5;32m"
+		" * at least one rock is on the perimeter of the grid is removed\n"
+		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		"\e[5;31m"
+		" * all the rocks removed are in a straight line\n"
+		" * no two rocks removed have a space between them\n"
+		"\e[0m";
+	return false;
+}
+
+bool rules_violation_four()
+{
+	cout <<
+		"\e[5;32m"
+		" * at least one rock is on the perimeter of the grid is removed\n"
+		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		" * all the rocks removed are in a straight line\n"
+		"\e[5;31m"
+		" * no two rocks removed have a space between them\n"
+		"\e[0m";
+	return false;
+}
+
+bool rules_followed()
+{
+	cout <<
+		"\e[5;32m"
+		" * at least one rock is on the perimeter of the grid is removed\n"
+		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		" * all the rocks removed are in a straight line\n"
+		" * no two rocks removed have a space between them\n"
+		"\e[0m";
+	return true;
+}
+
 bool Board::validate()
 {
 	unsigned first_x = -1;
@@ -96,8 +159,8 @@ bool Board::validate()
 					first_y = i;
 				}
 	if (first_x >= rocks.size())
-		return false;
-	return true;
+		return rules_violation_one();
+	return rules_followed();
 }
 
 void Board::clear_r()
@@ -119,6 +182,6 @@ void Board::print()
 			else if (rocks[i][j]==(char)1)
 				cout << "  ";
 			else
-				cout << " *";
+				cout << "\e[5;31m *\e[0m";
 	}
 }
