@@ -81,75 +81,32 @@ void Board::toggle_r(unsigned x, unsigned y)
 	}
 }
 
-bool rules_violation_one()
+bool rules_message(bool r_one, bool r_two, bool r_three, bool r_four)
 {
 	cout <<
-		"\e[5;31m"
-		" * at least one rock is on the perimeter of the grid is removed\n"
-		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
-		" * all the rocks removed are in a straight line\n"
-		" * no two rocks removed have a space between them\n"
-		"\e[0m";
+		"\n\e[5;3" << (r_one ? '2' : '1') << "m"
+		" *\e[0m at least one rock on the perimeter of the grid is removed\n"
+		"\e[5;3" << (r_two ? '2' : '1') << "m"
+		" *\e[0m if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
+		"\e[5;3" << (r_three ? '2' : '1') << "m"
+		" *\e[0m all the rocks removed are in a straight line\n"
+		"\e[5;3" << (r_four ? '2' : '1') << "m"
+		" *\e[0m no two rocks removed have a space between them\n\n";
+	return r_one && r_two && r_three && r_four;
 	return false;
-}
-
-bool rules_violation_two()
-{
-	cout <<
-		"\e[5;32m"
-		" * at least one rock is on the perimeter of the grid is removed\n"
-		"\e[5;31m"
-		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
-		" * all the rocks removed are in a straight line\n"
-		" * no two rocks removed have a space between them\n"
-		"\e[0m";
-	return false;
-}
-
-bool rules_violation_three()
-{
-	cout <<
-		"\e[5;32m"
-		" * at least one rock is on the perimeter of the grid is removed\n"
-		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
-		"\e[5;31m"
-		" * all the rocks removed are in a straight line\n"
-		" * no two rocks removed have a space between them\n"
-		"\e[0m";
-	return false;
-}
-
-bool rules_violation_four()
-{
-	cout <<
-		"\e[5;32m"
-		" * at least one rock is on the perimeter of the grid is removed\n"
-		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
-		" * all the rocks removed are in a straight line\n"
-		"\e[5;31m"
-		" * no two rocks removed have a space between them\n"
-		"\e[0m";
-	return false;
-}
-
-bool rules_followed()
-{
-	cout <<
-		"\e[5;32m"
-		" * at least one rock is on the perimeter of the grid is removed\n"
-		" * if any rocks removed on the perimeter are adjacent, then a rock must be removed from a corner\n"
-		" * all the rocks removed are in a straight line\n"
-		" * no two rocks removed have a space between them\n"
-		"\e[0m";
-	return true;
 }
 
 bool Board::validate()
 {
 	unsigned first_x = -1;
 	unsigned first_y = -1;
-	bool no_second = true;
-	bool second_down;
+	unsigned last_x = -1;
+	unsigned last_y = -1;
+	int num_dots = 0;
+	bool rule_one = true;
+	bool rule_two = true;
+	bool rule_three = true;
+	bool rule_four = true;
 	for (unsigned i = 0; i < rocks.size(); i++)
 		for (unsigned j = 0; j < rocks.size(); j++)
 			if (rocks[i][j]==(char)2)
@@ -157,10 +114,43 @@ bool Board::validate()
 				{
 					first_x = j;
 					first_y = i;
+					 last_x = j;
+					 last_y = i;
+					 num_dots++;
+				}
+				else
+				{
+					last_x = j;
+					last_y = i;
+					num_dots++;
 				}
 	if (first_x >= rocks.size())
-		return rules_violation_one();
-	return rules_followed();
+		return rules_message(false, false, false, false);
+	if (first_x != 0&& first_y != 0 && last_x != rocks.size()-1 && last_y != rocks.size()-1)
+		rule_one = false;
+	if (first_x == last_x)
+	{
+		if (last_y - first_y >= num_dots)
+			rule_three = false;
+		for (unsigned i = first_y; i < last_y; ++i)
+			if (rocks[i][first_x] != (char)2)
+				rule_four = false;
+		if ((first_x == 0 || first_x == rocks.size()-1) && !rule_four)
+			rule_two = false;
+	}
+	else if (first_y == last_y)
+	{
+		if (last_x - first_x >= num_dots)
+			rule_three = false;
+		for (unsigned i = first_x; i < last_x; ++i)
+			if (rocks[first_y][i] != (char)2)
+				rule_four = false;
+		if ((first_y == 0 || first_y == rocks.size()-1) && !rule_four)
+			rule_two = false;
+	}
+	else
+		rule_three = rule_four = false;
+	return rules_message(rule_one, rule_two, rule_three, rule_four);
 }
 
 void Board::clear_r()
@@ -182,6 +172,6 @@ void Board::print()
 			else if (rocks[i][j]==(char)1)
 				cout << "  ";
 			else
-				cout << "\e[5;31m *\e[0m";
+				cout << "\e[5;35m *\e[0m";
 	}
 }
