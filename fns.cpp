@@ -15,15 +15,19 @@ bool ask(char* q)
 
 void usermove_select(Board &board, unsigned x, unsigned y)
 {
-	cout << "\033[H" << "\n\n\n";
+	printf("\e[H\n\n\n");
 	board.print();
-	cout << '\n' << (board.validate() ? "VALID" : "     ") << "\n\nUse wasd to move cursor, q to toggle whether rock is set to be removed, and e to do move when VALID appears.\n";
-	cout << "\e[" << 7 + y << ";" << 3 + 2*x << "H";
+	printf("\n%s %s", (board.validate() ? "VALID" : "     "), "\n\nUse wasd to move cursor, q to toggle whether rock is set to be removed, and e to do move when VALID appears.\n");
+	printf("\e[%d %c %d %c", 7 + y, ';', 3 + 2*x, 'H');
 	char key;
-	key = getchar();
+	
+	noecho();
+	key = getch();
 	do
-		key = getchar();
+		key = getch();
 	while ((key != 'w') && (key != 'a') && (key != 's') && (key != 'd') && (key != 'q') && (key != 'e'));
+	echo();
+	endwin();
 	switch (key)
 	{
 	case 'a':
@@ -56,7 +60,7 @@ void usermove_select(Board &board, unsigned x, unsigned y)
 	case 'e':
 		if (board.validate())
 			return;
-		cout << '\a';
+		printf("\a");
 		break;
 	default:
 		break;
@@ -66,9 +70,9 @@ void usermove_select(Board &board, unsigned x, unsigned y)
 
 void usermove(Board* board)
 {
-	cout << "Human move\n\n\n";
+	printf("Human move\n\n\n");
 	board->print();
-	cout << "\e[H";
+	printf("\e[H");
 	unsigned x = 0;
 	unsigned y = 0;
 	usermove_select(*board, x, y);
@@ -77,33 +81,35 @@ void usermove(Board* board)
 
 void compmove(Board* board)
 {
-	cout << "Computer move\n\n\n";
+	printf("Computer move\n\n\n");
 	board->print();
 }
 
 void playgame(void(*p1)(Board*), void(*p2)(Board*))
 {
-	cout << "Game size: ";
+	printf("Game size: ");
 	unsigned size;
 	cin >> size;
 	Board board(size);
 	bool p2win = true;
+	initscr();
 	do
 	{
-		cout << "\e[1;1H\e[2J" << "Player 1: ";
+		printf("\e[1;1H\e[2JPlayer 1: ");
 		(*p1)(&board);
 		if (board.isover())
 		{
-			cout << "Player 1 wins!\n";
+			printf("Player 1 wins!\n");
 			p2win = false;
 			break;
 		}
-		cout << "\e[1;1H\e[2J" << "Player 2: ";
+		printf("\e[1;1H\e[2JPlayer 2: ");
 		(*p2)(&board);
 	}
 	while (!board.isover());
+	endwin();
 	if (p2win)
-		cout << "Player 2 wins!\n";
+		printf("Player 2 wins!\n");
 	bool play_again = ask("Play again");
 	if (play_again)
 		playgame(p1, p2);
