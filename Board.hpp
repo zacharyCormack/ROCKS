@@ -10,7 +10,6 @@ public:
 	void print();
 	unsigned get_size();
 	bool isover();
-	int move(unsigned, unsigned);
 	void toggle_r(unsigned, unsigned);
 	void clear_r();
 	bool validate();

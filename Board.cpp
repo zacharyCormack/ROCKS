@@ -17,46 +17,6 @@ unsigned Board::get_size()
 	return rocks.size();
 }
 
-int Board::move(unsigned col_or_row_num, unsigned num_rocks)
-{
-	if (col_or_row_num >= rocks.size()*4)
-		return -1;
-	switch ((int)(col_or_row_num/rocks.size()))
-	{
-	case 0:
-		for (size_t i = 0; i < num_rocks; i++)
-			if (rocks[col_or_row_num][i]==(char)1)
-				return -3;
-		for (size_t i = 0; i < num_rocks; i++)
-			rocks[col_or_row_num][i] = (char)1;
-		break;
-	case 1:
-		for (size_t i = 0; i < num_rocks+1; ++i)
-			if (rocks[col_or_row_num-rocks.size()][rocks.size()-i]==(char)1)
-				return -3;
-		for (size_t i = 0; i < num_rocks+1; ++i)
-			rocks[col_or_row_num-rocks.size()][rocks.size()-i] = (char)1;
-		break;
-	case 2:
-		for (size_t i = 0; i < num_rocks; i++)
-			if (rocks[i][col_or_row_num-rocks.size()*2]==(char)1)
-				return -3;
-		for (size_t i = 0; i < num_rocks; i++)
-			rocks[i][col_or_row_num-rocks.size()*2] = (char)1;
-		break;
-	case 3:
-		for (size_t i = 0; i < num_rocks+1; ++i)
-			if (rocks[rocks.size()-i][col_or_row_num-rocks.size()*3]==(char)1)
-				return -3;
-		for (size_t i = 0; i < num_rocks+1; ++i)
-			rocks[rocks.size()-i][col_or_row_num-rocks.size()*3] = (char)1;
-		break;
-	default:
-		return -2;
-	}
-	return 0;
-}
-
 bool Board::isover()
 {
 	for (size_t i = 0; i < rocks.size(); i++)
@@ -70,7 +30,6 @@ void Board::toggle_r(unsigned x, unsigned y)
 	switch (rocks[y][x])
 	{
 	case (char)1:
-		cout << '\a';
 		break;
 	case (char)0:
 		rocks[y][x] = (char)2;
@@ -103,14 +62,31 @@ bool Board::validate()
 	unsigned last_x = -1;
 	unsigned last_y = -1;
 	int num_dots = 0;
-	bool rule_one = true;
+	bool rule_one = false;
 	bool rule_two = true;
 	bool rule_three = true;
 	bool rule_four = true;
 	for (unsigned i = 0; i < rocks.size(); i++)
 		for (unsigned j = 0; j < rocks.size(); j++)
 			if (rocks[i][j]==(char)2)
-				if (first_x >= rocks.size())
+				if (i == 0 || i == rocks.size()-1 || j == 0 || j == rocks.size()-1)
+					if (first_x >= rocks.size())
+					{
+						first_x = j;
+						first_y = i;
+						 last_x = j;
+						 last_y = i;
+						 num_dots++;
+						 rule_one = true;
+					}
+					else
+					{
+						last_x = j;
+						last_y = i;
+						num_dots++;
+						rule_one = true;
+					}
+				else if (first_x >= rocks.size())
 				{
 					first_x = j;
 					first_y = i;
@@ -126,11 +102,11 @@ bool Board::validate()
 				}
 	if (first_x >= rocks.size())
 		return rules_message(false, false, false, false);
-	if (first_x != 0&& first_y != 0 && last_x != rocks.size()-1 && last_y != rocks.size()-1)
-		rule_one = false;
 	if (first_x == last_x)
 	{
 		if (last_y - first_y >= num_dots)
+			rule_four = false;
+		else if (last_y - first_y < num_dots-1)
 			rule_three = false;
 		for (unsigned i = first_y; i < last_y; ++i)
 			if (rocks[i][first_x] != (char)2)
@@ -141,6 +117,8 @@ bool Board::validate()
 	else if (first_y == last_y)
 	{
 		if (last_x - first_x >= num_dots)
+			rule_four = false;
+		else if (last_x - first_x < num_dots-1)
 			rule_three = false;
 		for (unsigned i = first_x; i < last_x; ++i)
 			if (rocks[first_y][i] != (char)2)

@@ -3,6 +3,6 @@
 
 bool ask(char*);
 void printrules();
-void usermove(Board*);
-void compmove(Board*);
-void playgame(void(*)(Board*), void(*)(Board*));
+bool usermove(Board*);
+bool compmove(Board*);
+void playgame(bool(*)(Board*), bool(*)(Board*));
