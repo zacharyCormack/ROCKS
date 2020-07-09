@@ -119,7 +119,7 @@ bool compmove(Board* board)
 		board->toggle_r(rand() % board->get_size(), rand() % board->get_size());
 	while (!(board->validate(false)));
 	end:
-	cout << "\e[HComputer\n";
+	cout << "\e[H\n";
 	board->print();
 	usleep(1500000);
 	board->clear_r();
@@ -151,7 +151,7 @@ void playgame(bool(*p1_move)(Board*), bool(*p2_move)(Board*), const char* p1_nam
 			p2win = false;
 			break;
 		}
-		cout << "\e[1;1H\e[2J\n\n" << p2_name;
+		cout << "\e[1;1H\e[2J" << p2_name;
 		usleep(750000);
 		if ((*p2_move)(&board))
 		{
