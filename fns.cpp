@@ -106,6 +106,9 @@ bool compmove(Board* board)
 {
 	cout << "\e[H\n";
 	board->print();
+	cout << "\e[H\n";
+	board->print();
+	usleep(1275000);
 	for (size_t i = 0; i < board->get_size(); i++)
 		for (size_t j = 0; j < board->get_size(); j++)
 			if (board->check_r(i, j))
@@ -116,7 +119,7 @@ bool compmove(Board* board)
 		board->toggle_r(rand() % board->get_size(), rand() % board->get_size());
 	while (!(board->validate(false)));
 	end:
-	cout << "\e[H\n";
+	cout << "\e[HComputer\n";
 	board->print();
 	usleep(1500000);
 	board->clear_r();
