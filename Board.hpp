@@ -12,6 +12,7 @@ public:
 	bool isover();
 	void toggle_r(unsigned, unsigned);
 	void clear_r();
-	bool validate();
+	bool check_r(unsigned, unsigned);
+	bool validate(bool);
 	Board(unsigned);
 };

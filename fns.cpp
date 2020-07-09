@@ -1,11 +1,4 @@
 #include "fns.hpp"
-#include <string>
-#include <termios.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <iostream>
-#include <cstdio>
-#include <unistd.h>
 
 bool ask(char* q)
 {
@@ -54,7 +47,7 @@ bool usermove_core(Board &board, unsigned x, unsigned y)
 	cout << "\e[H\n                                ";
 	board.print();
 	cout << "\n\n";
-	bool valid = board.validate();
+	bool valid = board.validate(true);
 	cout <<
 	(valid ? "\e[5;32mVALID\e[0m" : "     ") <<
 	"\n\nUse wasd to move cursor, q to select rock, e to remove all selected rocks, and r to resign.\n"
@@ -68,27 +61,19 @@ bool usermove_core(Board &board, unsigned x, unsigned y)
 	{
 	case 'a':
 		if (x != 0)
-		{
 			x--;
-		}
 		break;
 	case 'w':
 		if (y != 0)
-		{
 			y--;
-		}
 		break;
 	case 'd':
 		if (x+1 < board.get_size())
-		{
 			x++;
-		}
 		break;
 	case 's':
 		if (y+1 < board.get_size())
-		{
 			y++;
-		}
 		break;
 	case 'q':
 		board.toggle_r(x, y);
@@ -112,37 +97,36 @@ bool usermove_core(Board &board, unsigned x, unsigned y)
 
 bool usermove(Board* board)
 {
-	cout << "Human move";
 	bool resign = usermove_core(*board, 0, 0);
 	board->clear_r();
 	return resign;
 }
 
-
-
 bool compmove(Board* board)
 {
-	cout << "Computer move\n";
-	mv:
-	usleep(1250000);
-	unsigned a = rand() % board->get_size();
-	unsigned b = rand() % board->get_size();
-	unsigned c = rand() % 4;
-	for (size_t i = 0; i < a; i++)
-	{
-		board->toggle_r(c < 2 ? b : (c == 1 ? i : board->get_size()-1), c > 1 ? b : (c == 2 ? i : board->get_size()-1));
-	}
 	cout << "\e[H\n";
 	board->print();
-	cout << "\n\n";
-	if (!board->validate())
-		goto mv;
-	usleep(475000);
+	for (size_t i = 0; i < board->get_size(); i++)
+		for (size_t j = 0; j < board->get_size(); j++)
+			if (board->check_r(i, j))
+				board->toggle_r(board->get_size()-i-1, board->get_size()-j-1);
+	if (board->validate(false))
+		goto end;
+	do
+		board->toggle_r(rand() % board->get_size(), rand() % board->get_size());
+	while (!(board->validate(false)));
+	end:
+	cout << "\e[H\n";
+	board->print();
+	usleep(1500000);
 	board->clear_r();
+	cout << "\e[H\n";
+	board->print();
+	usleep(1275000);
 	return false;
 }
 
-void playgame(bool(*p1)(Board*), bool(*p2)(Board*))
+void playgame(bool(*p1_move)(Board*), bool(*p2_move)(Board*), const char* p1_name, const char* p2_name)
 {
 	cout << "Game size: ";
 	unsigned size;
@@ -151,27 +135,36 @@ void playgame(bool(*p1)(Board*), bool(*p2)(Board*))
 	bool p2win = true;
 	do
 	{
-		cout << "\e[1;1H\e[2J" << "Player 1: ";
-		if ((*p1)(&board))
+		cout << "\e[1;1H\e[2J" << p1_name;
+		usleep(750000);
+		if ((*p1_move)(&board))
+		{
+			cout << "\e[1;1H\e[2J\n\n" << p1_name << " has resigned!\n\n";
+			usleep(1250000);
 			break;
+		}
 		if (board.isover())
 		{
 			p2win = false;
 			break;
 		}
-		cout << "\e[1;1H\e[2J" << "Player 2: ";
-		if ((*p2)(&board))
+		cout << "\e[1;1H\e[2J\n\n" << p2_name;
+		usleep(750000);
+		if ((*p2_move)(&board))
 		{
 			p2win = false;
+			cout << "\e[1;1H\e[2J\n\n" << p2_name << " has resigned!\n\n";
+			usleep(1250000);
 			break;
 		}
 	}
 	while (!board.isover());
 	if (p2win)
-		cout << "\e[1;1H\e[2J" << "Player 2 wins!\n";
+		cout << "\e[1;1H\e[2J\n\n" << p2_name << " wins!\n\n";
 	else
-		cout << "\e[1;1H\e[2J" << "Player 1 wins!\n";
+		cout << "\e[1;1H\e[2J\n\n" << p1_name << " wins!\n\n";
+	usleep(1750000);
 	bool play_again = ask("Play again");
 	if (play_again)
-		playgame(p1, p2);
+		playgame(p1_move, p2_move, p1_name, p2_name);
 }

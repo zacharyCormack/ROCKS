@@ -40,6 +40,13 @@ void Board::toggle_r(unsigned x, unsigned y)
 	}
 }
 
+bool Board::check_r(unsigned x, unsigned y)
+{
+	if (rocks[y][x] == (char)0)
+		return false;
+	return true;
+}
+
 bool rules_message(bool r_one, bool r_two, bool r_three, bool r_four)
 {
 	cout <<
@@ -55,7 +62,7 @@ bool rules_message(bool r_one, bool r_two, bool r_three, bool r_four)
 	return false;
 }
 
-bool Board::validate()
+bool Board::validate(bool message)
 {
 	unsigned first_x = -1;
 	unsigned first_y = -1;
@@ -101,7 +108,7 @@ bool Board::validate()
 					num_dots++;
 				}
 	if (first_x >= rocks.size())
-		return rules_message(false, false, false, false);
+		return message ? rules_message(false, false, false, false) : false;
 	if (first_x == last_x)
 	{
 		if (last_y - first_y >= num_dots)
@@ -128,7 +135,7 @@ bool Board::validate()
 	}
 	else
 		rule_three = rule_four = false;
-	return rules_message(rule_one, rule_two, rule_three, rule_four);
+	return message ? rules_message(rule_one, rule_two, rule_three, rule_four) : rule_one && rule_two && rule_three && rule_four;
 }
 
 void Board::clear_r()
