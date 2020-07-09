@@ -111,27 +111,27 @@ bool Board::validate(bool message)
 		return message ? rules_message(false, false, false, false) : false;
 	if (first_x == last_x)
 	{
-		if (last_y - first_y >= num_dots)
-			rule_four = false;
-		else if (last_y - first_y < num_dots-1)
+		if (first_y != 0 && last_y != rocks.size()-1 && num_dots > 1)
+			rule_two = false;
+		if (last_y - first_y < num_dots-1)
 			rule_three = false;
+		else if (last_y - first_y >= num_dots)
+			rule_four = false;
 		for (unsigned i = first_y; i < last_y; ++i)
 			if (rocks[i][first_x] != (char)2)
 				rule_four = false;
-		if ((first_x == 0 || first_x == rocks.size()-1) && !rule_four)
-			rule_two = false;
 	}
 	else if (first_y == last_y)
 	{
-		if (last_x - first_x >= num_dots)
-			rule_four = false;
-		else if (last_x - first_x < num_dots-1)
+		if (first_x != 0 && last_x != rocks.size()-1 && num_dots > 1)
+			rule_two = false;
+		if (last_x - first_x < num_dots-1)
 			rule_three = false;
+		else if (last_x - first_x >= num_dots)
+			rule_four = false;
 		for (unsigned i = first_x; i < last_x; ++i)
 			if (rocks[first_y][i] != (char)2)
 				rule_four = false;
-		if ((first_y == 0 || first_y == rocks.size()-1) && !rule_four)
-			rule_two = false;
 	}
 	else
 		rule_three = rule_four = false;
