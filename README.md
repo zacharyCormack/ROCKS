@@ -27,13 +27,13 @@ You move a cursor and the w, a, s, d, q, e, and f keys to select rocks and remov
 
 The board class has various methods, but the key methods are `validate` and `print`.
 
-The `validate` function checks to see if the rules are being followed.
+The `validate` function checks to see if the rules are being followed, first to last.
 Then, a message is outputted via `rules_message`, which also performs a logic operation to see if the move is valid.
 
 The `print` function prints the board onto the console, allowing players to see it, which is *crucial* to gameplay.
 
-There are also some straightforward `toggle_r`, `clear_r`, `is_over` and `get_size` methods.
-These select/deselect rocks, clear selected rocks, check if the game is over, and return the grid size, respectively.
+There are also some straightforward `toggle_r`, `clear_r`, `check_r`, `is_over` and `get_size` methods.
+These select/deselect rocks, clear selected rocks, check if a rock exists, check if the game is over, and return the grid size, respectively.
 
 ### `fns`
 
@@ -42,9 +42,15 @@ Some other important but simple functions are `ask`, `mygetch`, and `printrules`
 
 The more advanced functions are `compmove`, `usermove`, and `usermove_core`.
 
-`compmove` perfoms a computer move, randomly.
+`compmove` perfoms a computer move, trying to ensure symmetry and otherwise moving randomly.
 
 `usermove` calls `usermove_core`, along with some setup, printing some stuff, and teardown, clearing selected rocks.
 
 `usermove_core` is a recursive function which calls itself each valid keypress.
 By using the `Board::validate` function, and a simple `switch` statement, a player may easily select and clear rocks.
+
+## In Use:
+
+![GAME](example.gif "A GAME OF THE GAME OF ROCKS")
+
+![RULES](example.png "THE RULES OF THE GAME OF ROCKS")
